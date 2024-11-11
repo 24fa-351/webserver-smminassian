@@ -26,6 +26,16 @@ def handle_connection(client_socket, client_address):
             if b'\r\n' in buffer:
                 newBuffer = buffer.split(b'\r\n')
                 print(newBuffer)
+                if b'/calc' in buffer:
+                    queryString = buffer.split(b'/calc?')[1].strip()
+                    query
+                    queryParam2 = buffer.split(b'$b=')[1].strip()
+                    
+                    num1 = int(num1.decode())
+                    num2 = int(num2.decode())
+
+                    sum = num1
+                    
                 if b'-p' in buffer:
                     port_part = buffer.split(b'-p')[1].strip()
                     print(port_part)
