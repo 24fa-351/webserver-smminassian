@@ -42,61 +42,76 @@ def handle_connection(client_socket, client_address):
             tot_bytes_received += len(buffer)
             
 
-            for actualMessage in newBuffer[:-1]:
-                print("Received: ", actualMessage)
-                client_socket.sendall(actualMessage)
+            
 
-            if b'GET' in buffer:
-                if b'\r\n' in buffer:
+           
+            if b'\r\n' in buffer:
                     newBuffer = buffer.split(b'\r\n')
-                    print(newBuffer)
-                    if b'/calc/' in buffer:
-                        queryString = buffer.split(b'/calc/')[1].strip()
-                        print("I am ", queryString)
-                        queryString = str(queryString)
-                        queryNum1 = queryString[2]
-                        queryNum2 = queryString[4]
-                        queryNum1 = int(queryNum1)
-                        queryNum2 = int(queryNum2)
-                        print("num1", queryNum1)
-                        print("num2", queryNum2)
+                    print("This is", newBuffer)
+                    if b'GET' in buffer:
+                        if b'/calc/' in buffer:
+                            queryString = buffer.split(b'/calc/')[1].strip()
+                            print("I am ", queryString)
+                            queryString = str(queryString)
+                            queryNum1 = queryString[2]
+                            queryNum2 = queryString[4]
+                            queryNum1 = int(queryNum1)
+                            queryNum2 = int(queryNum2)
+                            print("num1", queryNum1)
+                            print("num2", queryNum2)
 
-                        sum = queryNum1 + queryNum2
+                            sum = queryNum1 + queryNum2
 
-                        sumToString = str(sum)
+                            sumToString = str(sum)
 
-                        sumInBytes = sumToString.encode()
+                            response = f""" 
+                            {http_format}
+                            <html>
+                            <head>Server Stats</title></head>
+                            <body>
+                                <h1>Calculation</h1>
+                                <p>num1: {queryNum1}</p>
+                                <p>Total bytes Received: {queryNum2}</p>
+                                <p>Total Bytes Sent: {sumToString}
+                            </body>
+                            </html>
+                                        """
 
-                        client_socket.sendall(sumInBytes)
-                    if b'-p' in buffer:
-                        port_part = buffer.split(b'-p')[1].strip()
-                        print(port_part)
-                        new_port = int(port_part.decode())
-                        if new_port != portChange:
-                            portChange = new_port
-                            print("i am port change: ", portChange)
-                            restartServer()
-                    if b'/stat' in buffer:
-                        response = f"""
-                        {http_format}
-                        <html>
-                        <head>Server Stats</title></head>
-                        <body>
-                            <h1>Server Stats</h1>
-                            <p>Total Requests: {tot_requests}</p>
-                            <p>Total bytes Received: {tot_bytes_received}</p>
-                            <p>Total Bytes Sent: {tot_bytes_sent}
+                            responseInBytes = response.encode()
+
+                            client_socket.sendall(responseInBytes)
+                        if b'-p' in buffer:
+                            port_part = buffer.split(b'-p')[1].strip()
+                            print(port_part)
+                            new_port = int(port_part.decode())
+                            if new_port != portChange:
+                                portChange = new_port
+                                print("i am port change: ", portChange)
+                                restartServer()
+                        if b'/stat' in buffer:
+                            response = f"""
+                            {http_format}
+                            <html>
+                            <head>Server Stats</title></head>
+                            <body>
+                                <h1>Server Stats</h1>
+                                <p>Total Requests: {tot_requests}</p>
+                                <p>Total bytes Received: {tot_bytes_received}</p>
+                                <p>Total Bytes Sent: {tot_bytes_sent}
                             
-                        </body>
-                        </html>
-                        """
-                        responseInBytes = response.encode()
-                        tot_bytes_sent += len(responseInBytes)
-                        client_socket.sendall(responseInBytes)
+                            </body>
+                            </html>
+                            """
+                            responseInBytes = response.encode()
+                            tot_bytes_sent += len(responseInBytes)
+                            client_socket.sendall(responseInBytes)
             
-                        
+                        # for actualMessage in newBuffer[:-1]:
+                    #     print("Received: ", actualMessage)
+                    #     response = f"""<html>{actualMessage}</html>"""
+                    #     client_socket.sendall(response.encode())
             
-            buffer = newBuffer[-1]
+                    buffer = newBuffer[-1]
 
 
 def restartServer():
