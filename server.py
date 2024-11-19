@@ -40,7 +40,12 @@ def handle_connection(client_socket, client_address):
             buffer+=data
             tot_requests += 1
             tot_bytes_received += len(buffer)
-            print(buffer)
+            
+
+            for actualMessage in newBuffer[:-1]:
+                print("Received: ", actualMessage)
+                client_socket.sendall(actualMessage)
+
             if b'GET' in buffer:
                 if b'\r\n' in buffer:
                     newBuffer = buffer.split(b'\r\n')
@@ -88,12 +93,11 @@ def handle_connection(client_socket, client_address):
                         responseInBytes = response.encode()
                         tot_bytes_sent += len(responseInBytes)
                         client_socket.sendall(responseInBytes)
-                for actualMessage in newBuffer[:-1]:
-                    print("Received: ", actualMessage)
-                    client_socket.sendall(actualMessage)
+            
                         
             
-                buffer = newBuffer[-1]
+            buffer = newBuffer[-1]
+
 
 def restartServer():
     global echo_server, portChange
