@@ -5,7 +5,7 @@ import sys
 
 # Define the server address and port
 HOST = '127.0.0.1' 
-defaultPort = 80
+defaultPort = 8080
 
 portChange = defaultPort # Localhost
 # Port to listen on
@@ -16,18 +16,21 @@ tot_bytes_sent = 0
 
 http_format = """
                         -------------------
-                        HTTP/1.1 200 OK
-                        Date: Wed, 06 Nov 2024 20:22:58 GMT
-                        Server: Apache
-                        Last-Modified: Thu, 05 Nov 2018 04:53:39 GMT
-                        Etag: "ec-523c3e9170d07
-                        Accept-Ranges: bytes
-                        Content-Length: 
-                        Vary: Accept-Encoding
-                        Content-Type: text/html
+                            HTTP/1.1 200 OK
+                            Date: Wed, 06 Nov 2024 20:22:58 GMT
+                            Server: Apache
+                            Last-Modified: Thu, 05 Nov 2018 04:53:39 GMT
+                            Etag: "ec-523c3e9170d07
+                            Accept-Ranges: bytes
+                            Content-Length: 
+                            Vary: Accept-Encoding
+                            Content-Type: text/html
 
 
 """
+Routes = {"GET;/stats": handleStats, 
+        "GET;/calc": handleCalc,
+         "GET;/static/": handleStatic}
 
 def handle_connection(client_socket, client_address):
     global portChange, tot_requests, tot_bytes_received, tot_bytes_sent
