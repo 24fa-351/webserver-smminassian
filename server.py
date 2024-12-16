@@ -129,9 +129,6 @@ def restartServer():
     start_server()
 
 
-
-
-
 def start_server():
    global echo_server, portChange
    print("startserver on ", portChange)
